@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: workshop_db
+    restart: unless-stopped
+    command: ["--default-authentication-plugin=mysql_native_password", "--innodb-use-native-aio=0", "--sql-mode=ONLY_FULL_GROUP_BY,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"]
+    env_file: .env
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_USER: $WORDPRESS_DB_USER
+      MYSQL_PASSWORD: $WORDPRESS_DB_PASSWORD
+      MYSQL_DATABASE: $WORDPRESS_DB_NAME
+    ports:
+      - 7171:3306
+    volumes:
+      - ./.docker/mysql:/var/lib/mysql
+    networks:
+      - workshop
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: workshop_wordpress
+    restart: unless-stopped
+    ports:
+      - 7170:80
+    env_file: .env
+    volumes:
+      - ./wp-content/mu-plugins/:/var/www/html/wp-content/mu-plugins/
+      - ./wp-content/themes/:/var/www/html/wp-content/themes/
+    depends_on:
+      - mysql
+    networks:
+      - workshop
+      - proxy
+
+networks:
+  workshop:
+    driver: bridge
+  proxy:
+    external:
+      name: traefik_proxy

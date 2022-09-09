@@ -1,0 +1,20 @@
+{
+  "name": "wordpress/workshop",
+  "repositories":[
+    {
+      "type":"composer",
+      "url":"https://wpackagist.org"
+    }
+  ],
+  "require": {
+    "wpackagist-plugin/amazon-s3-and-cloudfront":"2.6.2",
+    "wpackagist-plugin/regenerate-thumbnails":"3.1.5",
+    "wpackagist-plugin/wordpress-seo":"19.6.1",
+    "ext-openssl": "*"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
+  }
+}
